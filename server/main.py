@@ -23,11 +23,11 @@ server_socket = None
 connection_active = False
 last_command_time = 0
 last_command = ""
-command_delay = 0.5  # medio segundo entre comandos
+command_delay = 0.7  # medio segundo entre comandos
 
 # Cargar el modelo
 try:
-    model = tf.keras.models.load_model("Models/model3.keras")
+    model = tf.keras.models.load_model("Models/optimized_model.keras")
     print("Modelo cargado exitosamente")
 except Exception as e:
     print(f"Error cargando el modelo: {e}")
@@ -109,6 +109,7 @@ def send_command(command):
         if command != last_command:
             conn.sendall(command.encode('utf-8'))
             last_command_time = current_time
+            #time.sleep(1)
             print(f"Comando enviado: {command}")
             last_command = command
         return True
@@ -236,7 +237,7 @@ with mp_hands.Hands(
 
                 hand_roi, image_white, predicted_class, confidence = generate_normalized_image(landmarks_px, image, h, w)
 
-                if predicted_class is not None and confidence > 0.7:
+                if predicted_class is not None and confidence > 0.9:
                     command = class_labels[predicted_class]
                     send_command(command)
 
